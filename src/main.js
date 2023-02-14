@@ -1,8 +1,9 @@
+import { weatherConfig } from "./config/weather-config.js";
 import { DataProcessor } from "./service/DataProcessor.js";
-const url = "https://api.open-meteo.com/v1/gfs?hourly=temperature_2m&timezone=IST";
-const dataProcessor = new DataProcessor(url);
+const dataProcessor = new DataProcessor(weatherConfig.url, weatherConfig.cities);
 async function displayTemperatures() {
-    const data = await dataProcessor.getData(29.5577, 34.9519);
-    console.log(data.hourly.temperature_2m)
+    const data = await dataProcessor.getTemperatureData("Tel_Aviv",
+     "2023-02-15", "2023-02-16", 14, 16);
+    console.log(data)
 }
 displayTemperatures();
