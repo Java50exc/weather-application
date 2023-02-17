@@ -94,7 +94,7 @@ export class DataForm {
             try {
                 await handlerFn(this.#getData())
             }catch (e) {
-                alert(e);
+                alert("Wrong configuration data, most likely incorrect forecast period");
             }
         }
     }

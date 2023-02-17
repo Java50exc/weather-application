@@ -11,8 +11,9 @@ const table = new Table("table-section", "Temperature Values",
     { columnName: "Hour", fieldName: "hour" },
     { columnName: "Temperature", fieldName: "temperature" }])
 dataForm.addHandler(async (data) => {
-    const temperatures = await dataProcessor.getTemperatureData(data.city,
-        data.startDate, data.endDate, data.hourFrom, data.hourTo);
+    const {city, startDate, endDate, hourFrom, hourTo} = data;
+    const temperatures = await dataProcessor.getTemperatureData(city,
+        startDate, endDate, hourFrom, hourTo);
         table.clear();
         temperatures.forEach(t => table.addRow(t));
 
