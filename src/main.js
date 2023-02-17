@@ -1,11 +1,19 @@
 import { weatherConfig } from "./config/weather-config.js";
 import { DataProcessor } from "./service/DataProcessor.js";
 import { DataForm } from "./ui/data-form.js";
+import { Table } from "./ui/table.js";
 const dataProcessor = new DataProcessor(weatherConfig.url, weatherConfig.cities);
-// async function displayTemperatures() {
-//     const data = await dataProcessor.getTemperatureData("Eilat",
-//      "2023-02-15", "2023-02-16", 14, 16);
-//     console.log(data)
-// }
-// displayTemperatures();
-const dataForm = new DataForm("form-section", weatherConfig.maxDays);
+
+const dataForm = new DataForm("form-section", Object.keys(weatherConfig.cities),
+    weatherConfig.maxDays);
+const table = new Table("table-section", "Temperature Values",
+    [{ columnName: "Date", fieldName: "date" },
+    { columnName: "Hour", fieldName: "hour" },
+    { columnName: "Temperature", fieldName: "temperature" }])
+dataForm.addHandler(async (data) => {
+    const temperatures = await dataProcessor.getTemperatureData(data.city,
+        data.startDate, data.endDate, data.hourFrom, data.hourTo);
+        table.clear();
+        temperatures.forEach(t => table.addRow(t));
+
+})
