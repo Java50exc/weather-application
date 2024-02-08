@@ -16,10 +16,7 @@ export class DataProcessor {
     }
 
     async getTemperatureData(city, startDate, endDate, hourFrom, hourTo) {
-        if (!this.#isDateValid(startDate, endDate, hourFrom, hourTo) || !this.#cities[city]) {
-            throw 'invalid input data';
-        }
-        const responseFromServer = await fetch(`${this.#url}&latitude=${this.#cities[city].latitude}&longitude=${this.#cities[city].longitude}&start_hour=${startDate}T${hourFrom}:00&end_hour=${endDate}T${hourTo}:00`);
+        const responseFromServer = await fetch(this.#getUrl(city, startDate, endDate, hourFrom, hourTo));
         const obj = await responseFromServer.json();
 
         return obj.hourly.time.map((elem, ind) => {
@@ -38,5 +35,14 @@ export class DataProcessor {
         const dateStart = new Date(`${startDate}T${'0' ? '00' : hourFrom}:00`);
         const dateEnd = new Date(`${endDate}T${'0' ? '00' : hourTo}:00`);
         return dateStart >= dateNow && dateEnd <= dateMax && hourFrom < 24 && hourTo < 24;
+    }
+
+    #getUrl(city, startDate, endDate, hourFrom, hourTo) {
+        if (!this.#isDateValid(startDate, endDate, hourFrom, hourTo) || !this.#cities[city]) {
+            throw 'invalid input data';
+        }
+        hourFrom = hourFrom.length == 1 ? `0${hourFrom}` : hourFrom;
+        hourTo = hourTo.length == 1 ? `0${hourTo}` : hourTo;
+        return `${this.#url}&latitude=${this.#cities[city].latitude}&longitude=${this.#cities[city].longitude}&start_hour=${startDate}T${hourFrom}:00&end_hour=${endDate}T${hourTo}:00`
     }
 }
