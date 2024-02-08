@@ -17,6 +17,8 @@ const dataTable = new Table("table-section", "Forecast", SCHEMA);
 async function showTemp(obj) {
     let data = await dataProcessor.getTemperatureData(obj["city"], obj["start_date"], 
         obj["end_date"], obj["time_from"], obj["time_to"]);
+
+    dataTable.clear();
     data.forEach(e => dataTable.addRow(e));
 }
 

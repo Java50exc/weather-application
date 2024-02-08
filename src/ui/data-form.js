@@ -91,7 +91,7 @@ export class DataForm {
     addResetHandler(handlerFn) {
         this.#formElement.addEventListener("reset", (event) => {
             handlerFn();
-        })
+        });
 
     }
 
