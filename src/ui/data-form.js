@@ -11,8 +11,10 @@ export class DataForm {
     #dateToElement;
     #timeFromElement;
     #timeToElement;
+    #maxDays
 
     constructor(parentId, cities, maxDays) {
+        this.#maxDays = maxDays;
         const parentElement = document.getElementById(parentId);
         this.#fillForm(parentElement);
         this.#formElement = document.getElementById(FORM_ID);
@@ -48,6 +50,14 @@ export class DataForm {
         this.#dateToElement.min = minDateStr;
         this.#dateFromElement.max = maxDateStr;
         this.#dateToElement.max = maxDateStr;
+
+        this.#dateFromElement.addEventListener('change', () => {
+            this.#dateToElement.min = this.#dateFromElement.value;
+        });
+
+        this.#dateToElement.addEventListener('change', () => {
+            this.#dateFromElement.max = this.#dateToElement.value;
+        })
     }
 
     #setCities(cities) {
@@ -57,14 +67,16 @@ export class DataForm {
     }
 
     #setTime() {
-        this.#timeFromElement.innerHTML = "<option selected disabled>Select time from</option>";
-        this.#timeToElement.innerHTML = "<option selected disabled>Select time to</option>";
+        this.#timeFromElement.innerHTML = "<option selected hidden disabled>Select time from</option>";
+        this.#timeToElement.innerHTML = "<option selected hidden disabled>Select time to</option>";
 
         let options = '';
         for (let i = 0; i < 24; i++) {
             const time = i < 10 ? "0"  + i : i;
             options += `<option value="${time}:00">${time}:00</option>`;
         }
+
+        
 
         this.#timeFromElement.innerHTML += options;
         this.#timeToElement.innerHTML += options;
@@ -89,8 +101,9 @@ export class DataForm {
     }
 
     addResetHandler(handlerFn) {
-        this.#formElement.addEventListener("reset", (event) => {
+        this.#formElement.addEventListener("reset", () => {
             handlerFn();
+            this.#setMinMaxDates(this.#maxDays);
         });
 
     }
