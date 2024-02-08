@@ -1,45 +1,46 @@
+import { weatherConfig } from "../config/weather-config.js";
+
 export class DataProcessor {
     #url;
     #cities;
+
     constructor(url, cities) {
         this.#url = url;
         this.#cities = cities;
     }
-    async #getData(actualUrl) {
+
+    async getData(latitude, longitude) {
         const responseFromServer =
-            await fetch(actualUrl);
+            await fetch(`${this.#url}&latitude=${latitude}&longitude=${longitude}`);
         return responseFromServer.json();
-
-
     }
+
     async getTemperatureData(city, startDate, endDate, hourFrom, hourTo) {
-        const latLong = this.#cities[city];
-        const actualUrl = this.#getActualUrl(latLong.latitude, latLong.longitude,
-            startDate, endDate);
-        const rawData = await this.#getData(actualUrl);
-        return processRawData(rawData, hourFrom, hourTo);
-    }
-    #getActualUrl(latitude, longitude, startDate, endDate) {
-        return `${this.#url}&latitude=${latitude}&longitude=${longitude}&start_date=${startDate}&end_date=${endDate}`
-    }
-}
-function processRawData(rawData, hourFrom, hourTo) {
-    
-    const timeArray = getHoursElements(rawData.hourly.time, hourFrom, hourTo);
-    const temperatureArray =getHoursElements(rawData.hourly.temperature_2m, hourFrom, hourTo); ;
-    return timeArray.map((t, index) => {
-        const res = {};
-        const dateTime = t.split("T");
-        res.date = dateTime[0];
-        res.hour = dateTime[1];
-        res.temperature = temperatureArray[index];
-        return res;
+        const responseFromServer = await fetch(this.#getUrl(city, startDate, endDate, hourFrom, hourTo));
+        const obj = await responseFromServer.json();
 
-    })
-}
-function getHoursElements (array, hourFrom, hourTo) {
-    return array.filter((__, index) => {
-        const hour = index % 24;
-        return hour >= hourFrom && hour <= hourTo
-    } )
+        return obj.hourly.time.map((elem, ind) => {
+            const dateTime = elem.split('T');
+            return {
+                date: dateTime[0],
+                hour: dateTime[1],
+                temperature: obj.hourly['temperature_2m'][ind]
+            };
+        });
+    }
+
+    #isDateValid(startDate, endDate, hourFrom, hourTo) {
+        const dateNow = new Date();
+        const dateMax = new Date().setDate(dateNow.getDate() + weatherConfig.maxDays);
+        const dateStart = new Date(`${startDate}T${'0' ? '00' : hourFrom}:00`);
+        const dateEnd = new Date(`${endDate}T${'0' ? '00' : hourTo}:00`);
+        return dateStart >= dateNow && dateEnd <= dateMax;
+    }
+
+    #getUrl(city, startDate, endDate, hourFrom, hourTo) {
+        if (!this.#isDateValid(startDate, endDate, hourFrom, hourTo) || !this.#cities[city]) {
+            throw 'invalid input data';
+        }
+        return `${this.#url}&latitude=${this.#cities[city].latitude}&longitude=${this.#cities[city].longitude}&start_hour=${startDate}T${hourFrom}:00&end_hour=${endDate}T${hourTo}:00`
+    }
 }
