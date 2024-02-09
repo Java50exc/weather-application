@@ -15,10 +15,12 @@ const dataTable = new Table("table-section", "Forecast", SCHEMA);
 
 
 async function showTemp(obj) {
+    console.log(obj)
     let data = await dataProcessor.getTemperatureData(obj.city, obj.startDate, 
         obj.endDate, obj.timeFrom, obj.timeTo);
     clearTable();
     dataTable.addRows(data);
+
 }
 
 function clearTable() {

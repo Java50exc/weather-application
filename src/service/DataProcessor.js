@@ -32,12 +32,13 @@ export class DataProcessor {
     #isDateValid(startDate, endDate, hourFrom, hourTo) {
         const dateNow = new Date();
         const dateMax = new Date().setDate(dateNow.getDate() + weatherConfig.maxDays);
-        const dateStart = new Date(`${startDate}T${'0' ? '00' : hourFrom}:00`);
-        const dateEnd = new Date(`${endDate}T${'0' ? '00' : hourTo}:00`);
+        const dateStart = new Date(`${startDate}T${hourFrom}`);
+        const dateEnd = new Date(`${endDate}T${hourTo}`);
         return dateStart >= dateNow && dateEnd <= dateMax;
     }
 
     #getUrl(city, startDate, endDate, hourFrom, hourTo) {
+
         if (!this.#isDateValid(startDate, endDate, hourFrom, hourTo) || !this.#cities[city]) {
             throw 'invalid input data';
         }
