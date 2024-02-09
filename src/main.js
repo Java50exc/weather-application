@@ -14,12 +14,15 @@ const dataForm = new DataForm("form-section", Object.keys(weatherConfig.cities),
 const dataTable = new Table("table-section", "Forecast", SCHEMA);
 
 
-async function showTemp(obj) {
-    console.log(obj)
-    let data = await dataProcessor.getTemperatureData(obj.city, obj.startDate, 
-        obj.endDate, obj.timeFrom, obj.timeTo);
-    clearTable();
-    dataTable.addRows(data);
+async function showTemp({city, startDate, endDate, timeFrom, timeTo}) {
+    try {
+        let data = await dataProcessor.getTemperatureData(city, startDate, endDate, timeFrom, timeTo);
+        clearTable();
+        dataTable.addRows(data);
+    } catch(e) {
+        console.log(e);
+    }
+    
 
 }
 

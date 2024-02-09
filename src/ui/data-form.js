@@ -85,7 +85,7 @@ export class DataForm {
     addSubmitHandler(handlerFn) {
         this.#formElement.addEventListener("submit", async (event) => {
             event.preventDefault();
-            const obj = Array.from(document.querySelectorAll("[name]"))
+            const obj = Array.from(this.#formElement.querySelectorAll("[name]"))
             .reduce((acc, cur) => {
                 acc[cur.name] = cur.value;
                 return acc;
