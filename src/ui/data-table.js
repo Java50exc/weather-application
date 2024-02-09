@@ -20,7 +20,12 @@ export class Table {
         </table>`
         this.#tbodyElement = document.getElementById(tableName);
     }
-    addRow(object){
+
+    addRows(objects) {
+        objects.forEach(elem => this.addRow(elem));
+    }
+
+    addRow(object) {
         this.#tbodyElement.innerHTML += getRow(object, this.#schema);
     }
 

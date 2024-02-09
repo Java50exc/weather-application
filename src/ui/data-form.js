@@ -29,11 +29,11 @@ export class DataForm {
     }
     #fillForm(parentElement) {
         parentElement.innerHTML = `<form id="${FORM_ID}">
-            <input name="start_date" type="date" id="${DATE_FROM_ID}" required>
-            <input name="end_date" type="date" id="${DATE_TO_ID}" required>
+            <input name="startDate" type="date" id="${DATE_FROM_ID}" required>
+            <input name="endDate" type="date" id="${DATE_TO_ID}" required>
             <select name="city" id="${CITIES_ID}" required></select>
-            <select name="time_from" id="${TIME_FROM_ID}" required></select>
-            <select name="time_to" id="${TIME_TO_ID}" required></select>
+            <select name="timeFrom" id="${TIME_FROM_ID}" required></select>
+            <select name="timeTo" id="${TIME_TO_ID}" required></select>
             <button type="submit">Submit</button>
             <button type="reset">Reset</button>
         </form>`
@@ -109,10 +109,10 @@ export class DataForm {
     }
 
     #validateInput(obj) {
-        if (obj["start_date"] > obj["end_date"]) {
+        if (obj.startDate > obj.endDate) {
             throw new Error('start date should be before end date');
         }
-        if (obj["start_date"] == obj["end_date"] && obj["time_from"] > obj["time_to"]) {
+        if (obj.startDate == obj.endDate && obj.timeFrom > obj.timeTo) {
             throw new Error('start time should be before end time'); 
         }      
     }
